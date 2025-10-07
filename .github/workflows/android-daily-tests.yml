@@ -1,0 +1,30 @@
+name: Run Android UI Tests Daily
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Runs every day at 9:00 AM UTC (5:00 AM Eastern, 6:00 AM Central, etc.)
+  workflow_dispatch:      # Allow manual trigger too
+
+jobs:
+  test:
+    name: Run Instrumentation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Grant execute permission to gradlew
+      run: chmod +x ./gradlew
+
+    - name: Run instrumentation tests
+      run: ./gradlew connectedDebugAndroidTest
